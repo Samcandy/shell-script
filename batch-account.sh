@@ -1,12 +1,13 @@
-!/bin/bash
-# Create group 
-groupadd mygroup
+#!/bin/bash
 
-# Create 30 user and add group
+groupadd mygroup
+pw=`openssl rand -base64 6`
+
 for (( i=1; i<=30; i=i+1 ))
 do
-        echo "myuser`printf "%02d\n" $i`,qwer" >> user.txt
+        echo "myuser`printf "%02d\n" $i`,$pw" >> user.txt
 done
+
 
 for line in $(cat ./user.txt)
 do
@@ -14,7 +15,7 @@ do
  pass=$( echo "$line" | cut -d , -f 2 )
 
  adduser $user
- echo "$pass" | passwd --stdin $user > /dev/null
+ echo "$user:$pass" | chpasswd
  usermod -g mygroup $user
 done
 
